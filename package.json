@@ -1,5 +1,8 @@
 {
     "name": "@byrojo/react-ka-ching-app",
     "version": "0.0.3",
-    "bin": "./bin.js"
+    "bin": "./bin.js",
+    "scripts": {
+        "dev": "nodemon npx bin.js"
+    }
 }
