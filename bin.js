@@ -1,15 +1,6 @@
 #!/usr/bin/env node
 const [, ,] = process.argv;
 
-const projectConfig = {
-  name: "project-name-goes-here",
-  repository: {
-    type: "git",
-    url: "",
-  },
-  license: "0IJ2LJDPOIJWOIEJF-DEMO",
-};
-
 const readline = require("readline").createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -18,7 +9,7 @@ const readline = require("readline").createInterface({
 const questions = {
   name: {
     question: "Project Name",
-    answer: "",
+    answer: "project-name-goes-here",
     required: false,
   },
   repoUrl: {
@@ -28,7 +19,7 @@ const questions = {
   },
   secretKey: {
     question: "Enter the license key",
-    answer: "",
+    answer: "0IJ2LJDPOIJWOIEJF-DEMO",
     required: false,
   },
 };
