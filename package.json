@@ -4,5 +4,9 @@
     "bin": "./bin.js",
     "scripts": {
         "dev": "nodemon npx bin.js"
+    },
+    "dependencies": {
+        "ansi-colors": "^4.1.3",
+        "axios": "^0.27.2"
     }
 }
