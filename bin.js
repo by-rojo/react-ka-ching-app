@@ -139,6 +139,18 @@ const downloadWordPressBE = () => {
   });
   };
 
+  const installWordPressBE = () => {
+    const loadingInstance = loadingIndicator("Installing the WordPress BE...")
+    return new Promise((resolve, reject) => {
+      exec(`cd ${projectServerPath()} && docker compose up -d`, (err) => {
+        stopLoadingIndicator(loadingInstance, "Successfully installed the WordPress BE!")
+        if (err) reject(err);
+        else resolve();
+      });
+    })
+  };
+  
+
 const exit = () => {
   readline.close();
 };
@@ -148,6 +160,7 @@ askQuestion()
   .then(() => downloadWebFE())
   .then(() => installWebFE())
   .then(() => downloadWordPressBE())
+  .then(() => installWordPressBE())
   .then(exit)
   .catch((err) => {
     console.error(err)
