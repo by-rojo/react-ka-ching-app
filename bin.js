@@ -1,16 +1,78 @@
 #!/usr/bin/env node
-const [, ,] = process.argv;
+const [, , ...args] = process.argv;
 const fs = require("fs");
 const path = require("path");
 const colors = require("ansi-colors")
 const { exec } = require("child_process");
+const amazon = require("./scripts/amazon")
+const wp = require("./scripts/wp")
+
+const SEED_MODE = args.includes("--seed")
 
 const readline = require("readline").createInterface({
     input: process.stdin,
     output: process.stdout,
 });
 
-const questions = {
+const seedQuestions = {
+    wpUrl: {
+        question: "Enter the WordPress URL",
+        answer: "http://localhost:8000",
+        required: false,
+    },
+    wpUser: {
+        question: "Enter a WordPress user to use with the JSON API",
+        answer: "Dolly",
+        required: false,
+    },
+    wpPass: {
+        question: "Enter the WordPress user password",
+        answer: "password123",
+        required: false,
+    },
+    wpStatus: {
+        question: "Enter the default post status",
+        answer: "publish",
+        required: false,
+    },
+    amazonAccessKey: {
+        question: "Enter the Amazon Access Key",
+        answer: "",
+        required: false,
+    },
+    amazonSecretKey: {
+        question: "Enter the Amazon Secret Key",
+        answer: "",
+        required: false,
+    },
+    amazonKeywords: {
+        question: "Enter keywords for Amazon products",
+        answer: "RV",
+        required: false,
+    },
+    amazonSearchIndex: {
+        question: "Enter Amazon product search index",
+        answer: "SportsAndOutdoors",
+        required: false,
+    },
+    amazonPartnerTag: {
+        question: "Enter Amazon partner tag",
+        answer: "spellcstr03-20",
+        required: false,
+    },
+    amazonHost: {
+        question: "Enter the Amazon Host Base URL",
+        answer: "webservices.amazon.com",
+        required: false
+    },
+    amazonRegion: {
+        question: "Enter the Amazon Host Region",
+        answer: "us-east",
+        required: false
+    },
+}
+
+const questions = SEED_MODE ? seedQuestions : {
     name: {
         question: "Project Name",
         answer: "project-name-goes-here",
@@ -26,71 +88,6 @@ const questions = {
         answer: "0IJ2LJDPOIJWOIEJF-DEMO",
         required: false,
     },
-    primaryColor: {
-        question: "Primary color",
-        answer: "red",
-        required: false
-    },
-    secondaryColor: {
-        question: "Secondary color",
-        answer: "purple",
-        required: false
-    },
-    fontColor: {
-        question: "Text color",
-        answer: "black",
-        required: false
-    },
-    baseFontSize: {
-        question: "Base font size",
-        answer: "16px",
-        required: false
-    },
-    fontFamily: {
-        question: "Font family",
-        answer: "Arial, sans-serif",
-        required: false
-    },
-    fontSrc: {
-        question: "Font src url",
-        answer: "",
-        required: false
-    },
-    alertColor: {
-        question: "Alert color",
-        answer: "red",
-        required: false
-    },
-    warningColor: {
-        answer: "yellow",
-        question: "Warning color",
-        required: false
-    },
-    infoColor: {
-        answer: "blue",
-        question: "Info color",
-        required: false
-    },
-    logoSrc: {
-        answer: "",
-        question: "Logo src url or file path",
-        required: false
-    },
-    favIcon: {
-        answer: "",
-        question: "Favicon src url or file path",
-        required: false
-    },
-    webTitle: {
-        answer: "",
-        question: "Enter the web site name",
-        required: false
-    },
-    webDescription: {
-        answer: "",
-        question: "Enter the web page description",
-        required: false
-    },
     hostUrl: {
         question: "Enter the host url",
         answer: "",
@@ -101,14 +98,9 @@ const questions = {
         answer: "",
         required: false
     },
-    imageDomain: {
-        question: "Enter the image domain used to serve up assets",
-        answer: "",
-        required: false
-    }
 };
 
-const questionObjectKeys = Object.keys(questions);
+const questionObjectKeys = Object.keys(SEED_MODE ? seedQuestions : questions);
 
 const loadingIndicator = (message) => {
     let step = 1;
@@ -225,8 +217,37 @@ const installWordPressBE = () => {
         exec(`cd ${projectServerPath()} && docker compose up -d`, (err) => {
             stopLoadingIndicator(loadingInstance, "Successfully installed the WordPress BE!")
             if (err) reject(err);
-            else resolve();
+            else exec("open http://localhost:8000", resolve);
         });
+    })
+};
+
+const seedProducts = () => {
+    const loadingInstance = loadingIndicator("Installing products from amazon")
+    return new Promise((resolve) => {
+
+        const amazonBot = amazon({
+            AMAZON_ACCESS_KEY: seedQuestions.amazonAccessKey.answer,
+            AMAZON_KEYWORDS: seedQuestions.amazonKeywords.answer,
+            AMAZON_PARTNER_TAG: seedQuestions.amazonPartnerTag.answer,
+            AMAZON_SEARCH_INDEX: seedQuestions.amazonSearchIndex.answer,
+            AMAZON_SECRET_KEY: seedQuestions.amazonSecretKey.answer,
+            AMAZON_HOST: seedQuestions.amazonHost.answer,
+            AMAZON_REGION: seedQuestions.amazonRegion.answer,
+        })
+
+        const wpBot = wp({
+            WP_URL: seedQuestions.wpUrl.answer,
+            WP_USER: seedQuestions.wpUser.answer,
+            WP_PASS: seedQuestions.wpPass.answer,
+            WP_STATUS: seedQuestions.wpStatus.answer,
+        })
+
+
+        return amazonBot.start().then(wpBot.start).then(() => {
+            stopLoadingIndicator(loadingInstance, "Successfully setup products")
+            return resolve()
+        })
     })
 };
 
@@ -235,14 +256,25 @@ const exit = () => {
     readline.close();
 };
 
-askQuestion()
-    .then(() => generateProject())
-    .then(() => downloadWebFE())
-    .then(() => installWebFE())
-    .then(() => downloadWordPressBE())
-    .then(() => installWordPressBE())
-    .then(exit)
-    .catch((err) => {
-        console.error(err)
-        exit()
-    })
+if (SEED_MODE) {
+    askQuestion()
+        .then(() => seedProducts())
+        .then(exit)
+        .catch((err) => {
+            console.error(err)
+            exit()
+        })
+}
+else {
+    askQuestion()
+        .then(() => generateProject())
+        .then(() => downloadWebFE())
+        .then(() => installWebFE())
+        .then(() => downloadWordPressBE())
+        .then(() => installWordPressBE())
+        .then(exit)
+        .catch((err) => {
+            console.error(err)
+            exit()
+        })
+}
