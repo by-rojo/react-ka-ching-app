@@ -3,7 +3,7 @@
     "version": "0.0.3",
     "bin": "./bin.js",
     "scripts": {
-        "dev": "nodemon --ignore ./project-name-goes-here/ --exec \"rm -rf project-name-goes-here && npx .\""
+        "dev": "nodemon --ignore ./project-name-goes-here/ --exec \"rm -rf project-name-goes-here && NODE_ENV=dev npx .\""
     },
     "dependencies": {
         "ansi-colors": "^4.1.3",

@@ -119,7 +119,7 @@ const installWebFE = () => {
   return new Promise((resolve, reject) => {
     exec(`cd ${projectClientPath()} && npm i`, (err) => {
       stopLoadingIndicator(loadingInstance, "Successfully installed the frontend!")
-      if (err) reject(err);
+      if (err && process.env.NODE_ENV !== "dev") reject(err);
       else resolve();
     });
   })
