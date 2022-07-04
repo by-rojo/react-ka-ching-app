@@ -67,10 +67,11 @@ const askQuestion = () => {
     if (key) {
       const questionObject = questions[key];
       readline.question(`${questionObject.question}: `, (answer) => {
+        const finalAnswer = (answer || questions[key].answer)
         questions[key].answer =
           key === "name"
-            ? answer.toLocaleLowerCase().replace(/ /g, "-")
-            : answer;
+            ? finalAnswer.toLocaleLowerCase().replace(/ /g, "-")
+            : finalAnswer;
         resolve(askQuestion());
       });
     } else resolve();
@@ -125,14 +126,17 @@ const installWebFE = () => {
 };
 
 const downloadWordPressBE = () => {
-    const loadingInstance = loadingIndicator("Downloading WordPress backend...")
-    return new Promise((resolve, reject) => {
-      exec(`cd ${projectClientPath()} && npm i`, (err) => {
-        stopLoadingIndicator(loadingInstance, "Successfully downloaded the backend!")
-        if (err) reject(err);
+  const loadingInstance = loadingIndicator("Downloading WordPress backend application...")
+  return new Promise((resolve, reject) => {
+    exec(
+      `curl -sL https://github.com/by-rojo/react-ka-ching-wp/zipball/main/ | tar zx --strip-components 1 -C ${projectServerPath()}`,
+      (error) => {
+        stopLoadingIndicator(loadingInstance, "Successfully downloaded the WordPress backend!")
+        if (error) reject(error);
         else resolve();
-      });
-    })
+      }
+    );
+  });
   };
 
 const exit = () => {
@@ -143,6 +147,9 @@ askQuestion()
   .then(() => generateProject())
   .then(() => downloadWebFE())
   .then(() => installWebFE())
- // .then(() => downloadWordPressBE())
+  .then(() => downloadWordPressBE())
   .then(exit)
-  .catch(exit)
+  .catch((err) => {
+    console.error(err)
+    exit()
+  })
