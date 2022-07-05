@@ -229,7 +229,7 @@ const installWordPressBE = () => {
 
 const seedProducts = () => {
     const loadingInstance = loadingIndicator("Installing products from amazon")
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
 
         const amazonBot = amazon({
             AMAZON_ACCESS_KEY: seedQuestions.amazonAccessKey.answer,
@@ -251,7 +251,7 @@ const seedProducts = () => {
         return amazonBot.start().then(wpBot.start).then(() => {
             stopLoadingIndicator(loadingInstance, "Successfully setup products")
             return resolve()
-        })
+        }).catch(reject)
     })
 };
 
