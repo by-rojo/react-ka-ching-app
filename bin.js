@@ -255,6 +255,9 @@ const seedProducts = () => {
             stopLoadingIndicator(loadingInstance)
             return reject(e)
         })
+    }).catch((e) => {
+        stopLoadingIndicator(loadingInstance)
+        return Promise.reject(e)
     })
 };
 
