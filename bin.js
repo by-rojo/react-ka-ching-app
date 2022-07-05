@@ -251,7 +251,10 @@ const seedProducts = () => {
         return amazonBot.start().then(wpBot.start).then(() => {
             stopLoadingIndicator(loadingInstance, "Successfully setup products")
             return resolve()
-        }).catch(reject)
+        }).catch((e) => {
+            stopLoadingIndicator(loadingInstance)
+            return reject(e)
+        })
     })
 };
 
