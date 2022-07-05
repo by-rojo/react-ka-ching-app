@@ -71,7 +71,7 @@ const seedQuestions = {
     },
     amazonRegion: {
         question: "Enter the Amazon Host Region",
-        answer: process.env.AMAZON_REGION || "us-east",
+        answer: process.env.AMAZON_REGION || "us-east-1",
         required: false
     },
 }
@@ -247,6 +247,24 @@ const seedProducts = () => {
             WP_PASS: seedQuestions.wpPass.answer,
             WP_STATUS: seedQuestions.wpStatus.answer,
         })
+
+
+        if (DEBUG_ENABLED) {
+            console.log({
+                AMAZON_ACCESS_KEY: seedQuestions.amazonAccessKey.answer,
+                AMAZON_KEYWORDS: seedQuestions.amazonKeywords.answer,
+                AMAZON_PARTNER_TAG: seedQuestions.amazonPartnerTag.answer,
+                AMAZON_SEARCH_INDEX: seedQuestions.amazonSearchIndex.answer,
+                AMAZON_SECRET_KEY: seedQuestions.amazonSecretKey.answer,
+                AMAZON_HOST: seedQuestions.amazonHost.answer,
+                AMAZON_REGION: seedQuestions.amazonRegion.answer,
+                WP_URL: seedQuestions.wpUrl.answer,
+                WP_USER: seedQuestions.wpUser.answer,
+                WP_PASS: seedQuestions.wpPass.answer,
+                WP_STATUS: seedQuestions.wpStatus.answer,
+            })
+        }
+
 
         return amazonBot.start().then(wpBot.start).then(() => {
             stopLoadingIndicator(loadingInstance, "Successfully setup products")

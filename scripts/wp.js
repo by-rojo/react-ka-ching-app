@@ -1,10 +1,10 @@
 const WPAPI = require('wpapi')
 
-const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS }) => {
+const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS}) => {
     const wp = new WPAPI({
         endpoint: WP_URL + '/wp-json',
         username: WP_USER,
-        password: WP_PASS
+        password: WP_PASS,
     })
 
     wp.deals = wp.registerRoute('wc/v3', '/products/(?P<id>\\d+)', {
@@ -145,7 +145,7 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS }) => {
                     }
                     console.log('done!', i)
                 } catch (e) {
-                    console.error(e.message, i)
+                   return Promise.reject(e)
                 }
             }
         }
