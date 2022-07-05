@@ -9,12 +9,15 @@ const wp = require("./scripts/wp")
 
 const SEED_MODE = args.includes("--seed")
 const SKIP_QUESTIONS = args.includes("--skip")
+const DEBUG_ENABLED = args.includes("--debug")
 
 const readline = require("readline").createInterface({
     input: process.stdin,
     output: process.stdout,
 });
-
+if (DEBUG_ENABLED) {
+    console.log(process.env.WP_USER)
+}
 const seedQuestions = {
     wpUrl: {
         question: "Enter the WordPress URL",
@@ -136,7 +139,7 @@ const projectServerPath = () => path.join(projectPath(), 'server');
 
 const askQuestion = () => {
     return new Promise((resolve) => {
-        if(SKIP_QUESTIONS) resolve()
+        if (SKIP_QUESTIONS) resolve()
         const key = questionObjectKeys.shift();
         if (key) {
             const questionObject = questions[key];
