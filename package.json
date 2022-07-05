@@ -1,5 +1,5 @@
 {
-    "name": "@byrojo/react-ka-ching-app",
+    "name": "react-ka-ching",
     "version": "0.0.3",
     "bin": "bin.js",
     "main": "bin.js",
