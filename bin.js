@@ -138,8 +138,8 @@ const projectClientPath = () => path.join(projectPath(), 'client');
 const projectServerPath = () => path.join(projectPath(), 'server');
 
 const askQuestion = () => {
-    return new Promise((resolve) => {
-        if (SKIP_QUESTIONS) return resolve()
+    return new Promise((resolve, reject) => {
+        if (SKIP_QUESTIONS) resolve()
         const key = questionObjectKeys.shift();
         if (key) {
             const questionObject = questions[key];
@@ -149,9 +149,9 @@ const askQuestion = () => {
                     key === "name"
                         ? finalAnswer.toLocaleLowerCase().replace(/ /g, "-")
                         : finalAnswer;
-                return resolve(askQuestion());
+                askQuestion().then(resolve).catch(reject)
             });
-        } else return resolve();
+        } else resolve();
     });
 };
 
