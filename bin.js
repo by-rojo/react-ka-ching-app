@@ -8,6 +8,7 @@ const amazon = require("./scripts/amazon")
 const wp = require("./scripts/wp")
 
 const SEED_MODE = args.includes("--seed")
+const SKIP_QUESTIONS = args.includes("--skip")
 
 const readline = require("readline").createInterface({
     input: process.stdin,
@@ -17,57 +18,57 @@ const readline = require("readline").createInterface({
 const seedQuestions = {
     wpUrl: {
         question: "Enter the WordPress URL",
-        answer: "http://localhost:8000",
+        answer: process.env.WP_URL || "http://localhost:8000",
         required: false,
     },
     wpUser: {
         question: "Enter a WordPress user to use with the JSON API",
-        answer: "Dolly",
+        answer: process.env.WP_USER || "Dolly",
         required: false,
     },
     wpPass: {
         question: "Enter the WordPress user password",
-        answer: "password123",
+        answer: process.env.WP_PASS || "password123",
         required: false,
     },
     wpStatus: {
         question: "Enter the default post status",
-        answer: "publish",
+        answer: process.env.WP_STATUS || "publish",
         required: false,
     },
     amazonAccessKey: {
         question: "Enter the Amazon Access Key",
-        answer: "",
+        answer: process.env.AMAZON_ACCESS_KEY || "",
         required: false,
     },
     amazonSecretKey: {
         question: "Enter the Amazon Secret Key",
-        answer: "",
+        answer: process.env.AMAZON_SECRET_KEY || "",
         required: false,
     },
     amazonKeywords: {
         question: "Enter keywords for Amazon products",
-        answer: "RV",
+        answer: process.env.AMAZON_KEYWORDS || "",
         required: false,
     },
     amazonSearchIndex: {
         question: "Enter Amazon product search index",
-        answer: "SportsAndOutdoors",
+        answer: process.env.AMAZON_SEARCH_INDEX || "",
         required: false,
     },
     amazonPartnerTag: {
         question: "Enter Amazon partner tag",
-        answer: "spellcstr03-20",
+        answer: process.env.AMAZON_PARTNER_TAG || "",
         required: false,
     },
     amazonHost: {
         question: "Enter the Amazon Host Base URL",
-        answer: "webservices.amazon.com",
+        answer: process.env.AMAZON_HOST || "webservices.amazon.com",
         required: false
     },
     amazonRegion: {
         question: "Enter the Amazon Host Region",
-        answer: "us-east",
+        answer: process.env.AMAZON_REGION || "us-east",
         required: false
     },
 }
@@ -135,6 +136,7 @@ const projectServerPath = () => path.join(projectPath(), 'server');
 
 const askQuestion = () => {
     return new Promise((resolve) => {
+        if(SKIP_QUESTIONS) resolve()
         const key = questionObjectKeys.shift();
         if (key) {
             const questionObject = questions[key];
@@ -242,7 +244,6 @@ const seedProducts = () => {
             WP_PASS: seedQuestions.wpPass.answer,
             WP_STATUS: seedQuestions.wpStatus.answer,
         })
-
 
         return amazonBot.start().then(wpBot.start).then(() => {
             stopLoadingIndicator(loadingInstance, "Successfully setup products")
