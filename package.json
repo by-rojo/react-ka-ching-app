@@ -3,6 +3,7 @@
     "version": "0.0.3",
     "bin": "bin.js",
     "main": "bin.js",
+    "repository": {"type": "git", "url": "https://github.com/by-rojo/react-ka-ching-app"},
     "scripts": {
         "start": "node .",
         "dev": "nodemon --ignore ./project-name-goes-here/ --exec \"rm -rf project-name-goes-here && NODE_ENV=dev npx .\""
