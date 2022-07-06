@@ -138,7 +138,6 @@ const loadingIndicator = (message) => {
     }
 }
 
-
 const projectPath = () => path.join(process.cwd(), questions.name.answer);
 const projectClientPath = () => path.join(projectPath(), 'client');
 const projectServerPath = () => path.join(projectPath(), 'server');
@@ -291,9 +290,8 @@ const seedProducts = () => {
     })
 };
 
-
-
 const exit = () => {
+    console.log("\r\n💰 💰 💰 KA-CHING 💰 💰 💰");
     readline.close();
 };
 

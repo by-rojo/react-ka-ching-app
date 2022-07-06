@@ -1,7 +1,7 @@
 const WPAPI = require('wpapi')
 const axios = require('axios')
 
-const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL}) => {
+const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL }) => {
     const wp = new WPAPI({
         endpoint: WP_URL + '/wp-json',
         username: WP_USER,
@@ -127,12 +127,20 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL}) => {
         }))
     }
 
-   return {
+    const clearLine = () => {
+        if (process.stdout.clearLine) {
+            process.stdout.clearLine()
+            process.stdout.cursorTo(0)
+        }
+    }
+
+    return {
         start: async (_data, keyWords, searchIndex) => {
             let i
             const { Items: items } = _data.SearchResult
             for (i = 0; i < items.length; i++) {
-                process.stdout.write(`🏃 running: ${items[i].ASIN} \r\n`)
+                clearLine();
+                console.log(`🏃 running: ${items[i].ASIN}`)
                 await recover()
                 try {
                     const data = await setData(items[i])
@@ -144,16 +152,18 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL}) => {
                             status: WP_STATUS
                         })
                     }
-                    if(WEBHOOK_URL) await axios.get(WEBHOOK_URL, {
-                        total: items.length, 
+                    if (WEBHOOK_URL) await axios.get(WEBHOOK_URL, {
+                        total: items.length,
                         current: i,
                         remaining: items.length - 1 + i,
                         keyWords,
                         searchIndex
                     })
-                    console.log('done!', i)
+                    clearLine();
+                    console.log(`🕺 done! ${i}`)
                 } catch (e) {
-                   console.error("woops!", e.message)
+                    clearLine();
+                    console.error("💩 woops!", e.message)
                 }
             }
         }
