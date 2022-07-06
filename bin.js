@@ -109,27 +109,28 @@ const questionObjectKeys = Object.keys(SEED_MODE ? seedQuestions : questions);
 const loadingIndicator = (message) => {
     let step = 1;
     console.log(message)
-    return setInterval(() => {
-        process.stdout.clearLine()
-        process.stdout.cursorTo(0)
+    if (process.stdout.clearLine) {
+        return setInterval(() => {
+            process.stdout.clearLine()
+            process.stdout.cursorTo(0)
+            switch (step) {
+                case (1):
+                    process.stdout.write(colors.magenta('°°°'))
+                    break;
+                case (2):
+                    process.stdout.write(colors.magenta('•°°'))
+                    break;
+                case (3):
+                    process.stdout.write(colors.magenta('°•°'))
 
-        switch (step) {
-            case (1):
-                process.stdout.write(colors.magenta('°°°'))
-                break;
-            case (2):
-                process.stdout.write(colors.magenta('•°°'))
-                break;
-            case (3):
-                process.stdout.write(colors.magenta('°•°'))
-
-                break;
-            default:
-                process.stdout.write(colors.magenta('°°•'))
-                break;
-        }
-        step = step === 4 ? 1 : step + 1;
-    }, 200)
+                    break;
+                default:
+                    process.stdout.write(colors.magenta('°°•'))
+                    break;
+            }
+            step = step === 4 ? 1 : step + 1;
+        }, 200)
+    }
 }
 
 
