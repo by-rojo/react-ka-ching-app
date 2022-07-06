@@ -1,6 +1,7 @@
 const WPAPI = require('wpapi')
+const axios = require('axios')
 
-const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS}) => {
+const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL}) => {
     const wp = new WPAPI({
         endpoint: WP_URL + '/wp-json',
         username: WP_USER,
@@ -127,7 +128,7 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS}) => {
     }
 
    return {
-        start: async (_data) => {
+        start: async (_data, keyWords, searchIndex) => {
             let i
             const { Items: items } = _data.SearchResult
             for (i = 0; i < items.length; i++) {
@@ -143,6 +144,13 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS}) => {
                             status: WP_STATUS
                         })
                     }
+                    if(WEBHOOK_URL) await axios.get(WEBHOOK_URL, {
+                        total: items.length, 
+                        current: i,
+                        remaining: items.length - 1 + i,
+                        keyWords,
+                        searchIndex
+                    })
                     console.log('done!', i)
                 } catch (e) {
                    return Promise.reject(e)

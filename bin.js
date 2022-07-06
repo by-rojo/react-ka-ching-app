@@ -6,7 +6,6 @@ const colors = require("ansi-colors")
 const { exec } = require("child_process");
 const amazon = require("./scripts/amazon")
 const wp = require("./scripts/wp")
-
 const SEED_MODE = args.includes("--seed")
 const SKIP_QUESTIONS = args.includes("--skip")
 const DEBUG_ENABLED = args.includes("--debug")
@@ -74,6 +73,11 @@ const seedQuestions = {
         answer: process.env.AMAZON_REGION || "us-east-1",
         required: false
     },
+    webhookUrl: {
+        question: "Enter a webhook to call after a product is added",
+        answer: process.env.WEBHOOK_URL || "",
+        required: false
+    }
 }
 
 const questions = SEED_MODE ? seedQuestions : {
@@ -102,6 +106,7 @@ const questions = SEED_MODE ? seedQuestions : {
         answer: "",
         required: false
     },
+
 };
 
 const questionObjectKeys = Object.keys(SEED_MODE ? seedQuestions : questions);
@@ -173,7 +178,7 @@ const generateProject = () => {
 
 const stopLoadingIndicator = (loadingInstance, message) => {
     clearInterval(loadingInstance)
-    if(process.stdout.clearLine) {
+    if (process.stdout.clearLine) {
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
     }
@@ -249,8 +254,8 @@ const seedProducts = () => {
             WP_USER: seedQuestions.wpUser.answer,
             WP_PASS: seedQuestions.wpPass.answer,
             WP_STATUS: seedQuestions.wpStatus.answer,
+            WEBOOK_URL: seedQuestions.webhookUrl.answer
         })
-
 
         if (DEBUG_ENABLED) {
             console.log({
@@ -268,8 +273,12 @@ const seedProducts = () => {
             })
         }
 
-
-        return amazonBot.start().then(wpBot.start).then(() => {
+        return amazonBot.start().then((data) => {
+            return wpBot.start(data,
+                seedQuestions.amazonKeywords.answer,
+                seedQuestions.amazonSearchIndex.answer
+            )
+        }).then(() => {
             stopLoadingIndicator(loadingInstance, "Successfully setup products")
             return resolve()
         }).catch((e) => {
@@ -281,6 +290,7 @@ const seedProducts = () => {
         return Promise.reject(e)
     })
 };
+
 
 
 const exit = () => {
