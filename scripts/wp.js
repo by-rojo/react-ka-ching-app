@@ -153,7 +153,7 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL}) => {
                     })
                     console.log('done!', i)
                 } catch (e) {
-                   return Promise.reject(e)
+                   console.error("woops!", e.message)
                 }
             }
         }
