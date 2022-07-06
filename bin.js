@@ -173,8 +173,10 @@ const generateProject = () => {
 
 const stopLoadingIndicator = (loadingInstance, message) => {
     clearInterval(loadingInstance)
-    process.stdout.clearLine()
-    process.stdout.cursorTo(0)
+    if(process.stdout.clearLine) {
+        process.stdout.clearLine()
+        process.stdout.cursorTo(0)
+    }
     if (message) console.log(colors.green(message))
 }
 
