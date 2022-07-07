@@ -163,7 +163,7 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL, SEED_ID }) =>
 
                    const callbackParams = {
                         seedTotal: items.length,
-                        seedCount: i,
+                        seedCount: i + 1,
                         seedRemaining: items.length - 1 - i,
                         seedErrors: errorCount,
                         seedSearchKeywords: keyWords,
