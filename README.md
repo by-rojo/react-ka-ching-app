@@ -26,3 +26,11 @@ To seed product data using the amazon affiliate api:
 
 To skip questions and use default answers:
 `npx react-ka-ching--skip`
+
+## TODO
+
+[] create function to map values to client package.json
+[] create function to map wordpress envs in wp-config.php
+[] create function to setup wordpress with initial data (plugins etc)
+[] create function to deploy to production using aws and vercel
+[] add ability to pause, delete and rerun seeds

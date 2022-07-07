@@ -17,7 +17,7 @@ const readline = require("readline").createInterface({
 if (DEBUG_ENABLED) {
     console.log(process.env.WP_USER)
 }
-const seedQuestions = {
+const commonQuestions = {
     wpUrl: {
         question: "Enter the WordPress URL",
         answer: process.env.WP_URL || "http://localhost:8000",
@@ -33,6 +33,9 @@ const seedQuestions = {
         answer: process.env.WP_PASS || "password123",
         required: false,
     },
+}
+const seedQuestions = {
+   ...commonQuestions,
     wpStatus: {
         question: "Enter the default post status",
         answer: process.env.WP_STATUS || "publish",
@@ -91,6 +94,26 @@ const questions = SEED_MODE ? seedQuestions : {
         answer: "project-name-goes-here",
         required: false,
     },
+    siteName: {
+        question: "Enter the site name",
+        answer: "",
+        required: false
+    },
+    businessName: {
+        question: "Enter the business name",
+        answer: "",
+        required: false
+    },
+    businessDescription: {
+        question: "Enter the business/site description",
+        answer: "",
+        required: false
+    },
+    blogPageDescription: {
+        question: "Enter the blog page description",
+        answer: "",
+        required: false
+    },
     repoUrl: {
         question: "Git repo URL for the project",
         answer: "",
@@ -102,7 +125,7 @@ const questions = SEED_MODE ? seedQuestions : {
         required: false,
     },
     hostUrl: {
-        question: "Enter the host url",
+        question: "Enter the host url for the frontend react-app",
         answer: "",
         required: false
     },
@@ -111,7 +134,12 @@ const questions = SEED_MODE ? seedQuestions : {
         answer: "",
         required: false
     },
-
+    imageDomain: {
+        question: "External domain for images (example example.s3.amazonaws.com)",
+        answer: "",
+        required: false
+    },
+    ...commonQuestions
 };
 
 const questionObjectKeys = Object.keys(SEED_MODE ? seedQuestions : questions);
@@ -132,7 +160,6 @@ const loadingIndicator = (message) => {
                     break;
                 case (3):
                     process.stdout.write(colors.magenta('°•°'))
-
                     break;
                 default:
                     process.stdout.write(colors.magenta('°°•'))
@@ -144,7 +171,7 @@ const loadingIndicator = (message) => {
 }
 
 const projectPath = () => path.join(process.cwd(), questions.name.answer);
-const projectClientPath = () => path.join(projectPath(), 'client');
+const projectClientPath = (subPath) => path.join(projectPath(), 'client', subPath || '');
 const projectServerPath = () => path.join(projectPath(), 'server');
 
 const askQuestion = () => {
@@ -206,13 +233,40 @@ const downloadWebFE = () => {
 const installWebFE = () => {
     const loadingInstance = loadingIndicator("Installing the frontend...")
     return new Promise((resolve, reject) => {
-        exec(`cd ${projectClientPath()} && npm i`, (err) => {
+        exec(`cd ${projectClientPath()} && git init && npm i`, (err) => {
             stopLoadingIndicator(loadingInstance, "Successfully installed the frontend!")
             if (err && process.env.NODE_ENV !== "dev") reject(err);
             else resolve();
         });
     })
 };
+
+const mapQuestionsToClientENV = () => {
+    //todo need do do an if statement for every key so that it defaults to env by itself
+    const envs = []
+    if(questions.wpUrl.answer) envs.push(`WP_URL=${questions.wpUrl.answer}`)
+    if(questions.wpUser.answer) envs.push(`WP_USER=${questions.wpUrl.answer}`)
+    if(questions.wpPass.answer) envs.push(`WP_PASS=${questions.wpPass}`)
+    if(questions.imageDomain.answer) envs.push(`IMAGE_DOMAIN=${questions.imageDomain.answer}`)
+    if(questions.hostUrl.answer) envs.push(`NEXT_PUBLIC_HOST_URL=${questions.hostUrl.answer}`)
+    if(questions.businessName.answer) envs.push(`NEXT_PUBLIC_COMPANY_NAME=${questions.businessName.answer}`)
+    if(questions.gaID.answer) envs.push(`NEXT_PUBLIC_GA_ID=${questions.gaID.answer}`)
+    if(questions.siteName.answer) envs.push(`NEXT_PUBLIC_SITE_NAME=${questions.siteName.answer}`)
+    if(questions.businessDescription.answer) envs.push(`NEXT_PUBLIC_SITE_DESCRIPTION=${questions.businessDescription.answer}`)
+    if(questions.blogPageDescription.answer) envs.push(`NEXT_PUBLIC_BLOG_PAGE_DESCRIPTION=${questions.blogPageDescription.answer}`)
+    return createFile(projectClientPath('.env.local'), envs.join('\r\n'))
+}
+
+
+
+const createFile = (file, text) => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile( file, text,  {flag: 'w+'}, (err, data) => {
+            if(err) reject(err)
+            else resolve(data)
+        })
+    })
+}
 
 const downloadWordPressBE = () => {
     const loadingInstance = loadingIndicator("Downloading WordPress backend application...")
@@ -316,9 +370,11 @@ else {
     askQuestion()
         .then(() => generateProject())
         .then(() => downloadWebFE())
+        .then(() => mapQuestionsToClientENV())
         .then(() => installWebFE())
         .then(() => downloadWordPressBE())
         .then(() => installWordPressBE())
+
         .then(exit)
         .catch((err) => {
             console.error(err)
