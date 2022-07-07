@@ -1,12 +1,19 @@
 const WPAPI = require('wpapi')
 const axios = require('axios')
 
-const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL }) => {
+const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL, SEED_ID }) => {
     const wp = new WPAPI({
         endpoint: WP_URL + '/wp-json',
         username: WP_USER,
         password: WP_PASS,
     })
+
+    wp.reactKaChingWebhook = wp.registerRoute('react-ka-ching-wp/v1', '/seed/(?P<id>\\d+)', {
+        params: [
+            'id'
+        ]
+    })
+
 
     wp.deals = wp.registerRoute('wc/v3', '/products/(?P<id>\\d+)', {
         params: [
@@ -137,6 +144,7 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL }) => {
     return {
         start: async (_data, keyWords, searchIndex) => {
             let i
+            let errorCount = 0;
             const { Items: items } = _data.SearchResult
             for (i = 0; i < items.length; i++) {
                 clearLine();
@@ -152,16 +160,33 @@ const runWP = ({ WP_URL, WP_USER, WP_PASS, WP_STATUS, WEBHOOK_URL }) => {
                             status: WP_STATUS
                         })
                     }
-                    if (WEBHOOK_URL) await axios.get(WEBHOOK_URL, {
-                        total: items.length,
-                        current: i,
-                        remaining: items.length - 1 + i,
-                        keyWords,
-                        searchIndex
-                    })
+
+                   const callbackParams = {
+                        seedTotal: items.length,
+                        seedCount: i,
+                        seedRemaining: items.length - 1 + i,
+                        seedErrors: errorCount,
+                        seedSearchKeywords: keyWords,
+                        seedSearchIndex: searchIndex,
+                        seedId: SEED_ID,
+                    }
+
+                    if(SEED_ID) {
+                        await wp.reactKaChingWebhook().id(SEED_ID).update(callbackParams).catch(e => {
+                            clearLine()
+                            console.error("🙊 rka wp webhook error!", e.message || e)
+                        })
+                    }
+                    if (WEBHOOK_URL) {
+                         await axios.post(WEBHOOK_URL,callbackParams).catch(e => {
+                            clearLine()
+                            console.error("🙉 custom webhook error!", e.message || e)
+                        })
+                    }
                     clearLine();
                     console.log(`🕺 done! ${i}`)
                 } catch (e) {
+                    errorCount +=1;
                     clearLine();
                     console.error("💩 woops!", e.message)
                 }

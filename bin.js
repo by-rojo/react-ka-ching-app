@@ -77,6 +77,11 @@ const seedQuestions = {
         question: "Enter a webhook to call after a product is added",
         answer: process.env.WEBHOOK_URL || "",
         required: false
+    },
+    seedID: {
+        question: "Enter a seed id from wordpress if you have one",
+        answer: process.env.SEED_ID || "",
+        required: false,
     }
 }
 
@@ -253,11 +258,14 @@ const seedProducts = () => {
             WP_USER: seedQuestions.wpUser.answer,
             WP_PASS: seedQuestions.wpPass.answer,
             WP_STATUS: seedQuestions.wpStatus.answer,
-            WEBOOK_URL: seedQuestions.webhookUrl.answer
+            WEBHOOK_URL: seedQuestions.webhookUrl.answer,
+            SEED_ID: seedQuestions.seedID.answer,
         })
 
         if (DEBUG_ENABLED) {
             console.log({
+                SEED_ID: seedQuestions.seedID.answer,
+                WEBOOK_URL: seedQuestions.webhookUrl.answer,
                 AMAZON_ACCESS_KEY: seedQuestions.amazonAccessKey.answer,
                 AMAZON_KEYWORDS: seedQuestions.amazonKeywords.answer,
                 AMAZON_PARTNER_TAG: seedQuestions.amazonPartnerTag.answer,
