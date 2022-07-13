@@ -34,3 +34,24 @@ To skip questions and use default answers:
 [] create function to setup wordpress with initial data (plugins etc)
 [] create function to deploy to production using aws and vercel
 [] add ability to pause, delete and rerun seeds
+[] Update wordpress
+[] Set localhost to http://localhost:80 in the admin wp url 
+[] Make sure to set permalinks to the last option in the wp settings
+[] Update the git url for IAGMFT (move to new repo change name/readme of project to react-ka-ching-next)
+[] Merge server and client into 1 mono project with package json at the root
+[] Remove todo section of IAGMFT project
+[] Add docker tags to build commands so server doesnt keep having conflicts
+[] Add env.example file so it doesnt get ignored
+[] Name folders from client to project-name-client and project-name-server
+[] Give option to not have wordpress and use express server instead
+[] Map tokens to readme to autofill values in client server readmes
+[] Delete the .git folder after pulling each repository
+[] Run commands to automatically setup repostory if url is provided
+```bash
+git init
+git remote add origin <repoURL>
+git pull origin main
+git add .
+git commit -m "initial commit"
+git push -u origin main
+```
