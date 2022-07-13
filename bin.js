@@ -228,7 +228,7 @@ const downloadWebFE = () => {
 const installWebFE = () => {
     const loadingInstance = loadingIndicator("Installing the frontend...")
     return new Promise((resolve, reject) => {
-        exec(`cd ${projectClientPath()} && git init && npm i`, (err) => {
+        exec(`cd ${projectClientPath()} && git init && npm i && rm -rf .git`, (err) => {
             stopLoadingIndicator(loadingInstance, "Successfully installed the frontend!")
             if (err && process.env.NODE_ENV !== "dev") reject(err);
             else resolve();
