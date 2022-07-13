@@ -240,8 +240,8 @@ const mapQuestionsToClientENV = () => {
     //todo need do do an if statement for every key so that it defaults to env by itself
     const envs = []
     if(questions.wpUrl.answer) envs.push(`WP_URL=${questions.wpUrl.answer}`)
-    if(questions.wpUser.answer) envs.push(`WP_USER=${questions.wpUrl.answer}`)
-    if(questions.wpPass.answer) envs.push(`WP_PASS=${questions.wpPass}`)
+    if(questions.wpUser.answer) envs.push(`WP_USER=${questions.wpUser.answer}`)
+    if(questions.wpPass.answer) envs.push(`WP_PASS=${questions.wpPass.answer}`)
     if(questions.imageDomain.answer) envs.push(`IMAGE_DOMAIN=${questions.imageDomain.answer}`)
     if(questions.businessName.answer) envs.push(`NEXT_PUBLIC_COMPANY_NAME=${questions.businessName.answer}`)
     if(questions.gaID.answer) envs.push(`NEXT_PUBLIC_GA_ID=${questions.gaID.answer}`)
