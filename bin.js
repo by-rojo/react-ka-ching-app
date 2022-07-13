@@ -167,7 +167,7 @@ const loadingIndicator = (message) => {
 
 const projectPath = () => path.join(process.cwd(), questions.name.answer);
 const projectClientPath = (subPath) => path.join(projectPath(), 'client', subPath || '');
-const projectServerPath = () => path.join(projectPath(), 'server');
+const projectServerPath = (subPath) => path.join(projectPath(), 'server',  subPath || '');
 
 const askQuestion = () => {
     return new Promise((resolve, reject) => {
@@ -215,7 +215,7 @@ const downloadWebFE = () => {
     const loadingInstance = loadingIndicator("Downloading the frontend...")
     return new Promise((resolve, reject) => {
         exec(
-            `curl -sL https://github.com/by-rojo/iagnmft-nodejs/zipball/main/ | tar zx --strip-components 1 -C ${projectClientPath()}`,
+            `curl -sL https://github.com/by-rojo/iagnmft-nodejs/zipball/main/ | tar zx --strip-components 1 -C ${projectClientPath()} && rm -rf ${projectClientPath('.git')}`,
             (error, output) => {
                 stopLoadingIndicator(loadingInstance, "Successfully downloaded the frontend!")
                 if (error) reject(error);
@@ -266,7 +266,7 @@ const downloadWordPressBE = () => {
     const loadingInstance = loadingIndicator("Downloading WordPress backend application...")
     return new Promise((resolve, reject) => {
         exec(
-            `curl -sL https://github.com/by-rojo/react-ka-ching-wp/zipball/main/ | tar zx --strip-components 1 -C ${projectServerPath()}`,
+            `curl -sL https://github.com/by-rojo/react-ka-ching-wp/zipball/main/ | tar zx --strip-components 1 -C ${projectServerPath()} && rm -rf ${projectServerPath('.git')}`,
             (error) => {
                 stopLoadingIndicator(loadingInstance, "Successfully downloaded the WordPress backend!")
                 if (error) reject(error);
