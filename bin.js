@@ -124,11 +124,6 @@ const questions = SEED_MODE ? seedQuestions : {
         answer: "0IJ2LJDPOIJWOIEJF-DEMO",
         required: false,
     },
-    hostUrl: {
-        question: "Enter the host url for the frontend react-app",
-        answer: "",
-        required: false
-    },
     gaID: {
         question: "Enter a Google Analytics ID",
         answer: "",
@@ -248,7 +243,6 @@ const mapQuestionsToClientENV = () => {
     if(questions.wpUser.answer) envs.push(`WP_USER=${questions.wpUrl.answer}`)
     if(questions.wpPass.answer) envs.push(`WP_PASS=${questions.wpPass}`)
     if(questions.imageDomain.answer) envs.push(`IMAGE_DOMAIN=${questions.imageDomain.answer}`)
-    if(questions.hostUrl.answer) envs.push(`NEXT_PUBLIC_HOST_URL=${questions.hostUrl.answer}`)
     if(questions.businessName.answer) envs.push(`NEXT_PUBLIC_COMPANY_NAME=${questions.businessName.answer}`)
     if(questions.gaID.answer) envs.push(`NEXT_PUBLIC_GA_ID=${questions.gaID.answer}`)
     if(questions.siteName.answer) envs.push(`NEXT_PUBLIC_SITE_NAME=${questions.siteName.answer}`)
