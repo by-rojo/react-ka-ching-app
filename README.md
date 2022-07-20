@@ -16,6 +16,16 @@ The WordPress installation uses WooCommerce under the hood to manage products. T
 [See a complete working demo here.](https://iagnmft-nodejs.vercel.app/)
 
 
+## This is working and needs more 💓
+
+If you would like to use this to boostrap your architecture you might need my help as the documentation is still lacking. I'm working on ironing out the user experience for the developers, and will have documenation very soon.
+
+If you need a helping hand, please [schedual some time on my calendly.](https://calendly.com/roe_the_dev/code-review)
+
+This code is open source so if you can make it better, please open a PR!
+
+– [Roe Greene](https://roethedev.com)
+
 ## Running
 
 To create a new app:

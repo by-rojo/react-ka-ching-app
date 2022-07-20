@@ -25,7 +25,7 @@ const commonQuestions = {
     },
     wpUser: {
         question: "Enter a WordPress user to use with the JSON API",
-        answer: process.env.WP_USER || "Dolly",
+        answer: process.env.WP_USER || "wordpress",
         required: false,
     },
     wpPass: {
