@@ -37,6 +37,13 @@ To seed product data using the amazon affiliate api:
 To skip questions and use default answers:
 `npx react-ka-ching--skip`
 
+## Wordpress Notes
+When useing with wordpress make sure to do the following:
+* Enable woocomerce legacy rest api
+* Setup permalinks to use a normalized endpoint /products for example 
+* If running in a docker container - setup the url to be http://host.docker.internal:port
+
+
 ## TODO
 
 [] create function to map values to client package.json
